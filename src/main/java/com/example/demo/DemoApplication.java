@@ -52,14 +52,14 @@ public class DemoApplication {
         }
 
         @RequestMapping(method = RequestMethod.GET, value = "/direct")
-        public Mono<Void> direct(@RequestParam Integer sleep) {
+        public Mono<String> direct(@RequestParam Integer sleep) {
             ThreadLocalRandom random = ThreadLocalRandom.current();
             int index = random.nextInt(webClients.size());
             return request(webClients.get(index), sleep);
         }
 
         @RequestMapping(method = RequestMethod.GET, value = "/one")
-        public Mono<Void> one(@RequestParam Integer sleep) {
+        public Mono<String> one(@RequestParam Integer sleep) {
             return request(webClient, sleep);
         }
 
@@ -68,12 +68,12 @@ public class DemoApplication {
             return Mono.just("sleep " + sleep.toString() + "ms").delayElement(Duration.ofMillis(sleep));
         }
 
-        private Mono<Void> request(WebClient webClient, Integer sleep) {
+        private Mono<String> request(WebClient webClient, Integer sleep) {
             return webClient
                     .get()
                     .uri("serviceA/sleepNms.action?n=" + sleep)
                     .exchange()
-                    .flatMap(r -> r.bodyToMono(Void.class));
+                    .flatMap(r -> r.bodyToMono(String.class));
         }
     }
 }
